@@ -3,7 +3,6 @@
 A Discord bot that includes Quality of Life updates created for a specific Discord server.
 
 <h2>Features</h2>
-------
 
 This bot is still in development. You can find the current live version on the master branch.
 - This bot can remove or add roles to a user.
@@ -15,7 +14,6 @@ This bot is still in development. You can find the current live version on the m
 Please check out the [command documentation](/docs/COMMANDS.md) for a comprohensive documentation about all the commands available.
 
 <h2>Contributing</h2>
-------
 
 When adding new features, please make sure to make your pull requests off the `development` branch. Thank you!
 
@@ -39,7 +37,7 @@ When adding new features, please make sure to make your pull requests off the `d
 4. Edit `config.json` to your preferences.
 
 ### Running the bot
-1. Run the mod
+1. Run the bot
     ```shell script
     npm run dev
     ```

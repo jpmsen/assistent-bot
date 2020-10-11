@@ -2,6 +2,7 @@ module.exports = {
     name: 'clearchat',
     description: 'Clears the chat within the given limit parameter.',
     args: true,
+    usage: '<amount>',
     cooldown: 20,
     execute(message, args) {
         if (message.member.roles.cache.find(role => role.name.toLowerCase() === 'admin')) {

@@ -3,8 +3,10 @@ const Discord = require('discord.js');
 const { version, prefix, token } = require('./config.json');
 
 const { Server } = require('http');
+const { message } = require('./commands/info');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+const cooldowns = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -42,6 +44,27 @@ client.on('message', msg => {
     if (command.args && !args.length) {
         return msg.channel.send(`Deze command heeft arguments nodig, ${msg.author}!`);
     }
+
+    // Check if command is still in cooldown for user.
+    if (!cooldowns.has(command.name)) {
+        cooldowns.set(command.name, new Discord.Collection());
+    }
+
+    const now = Date.now();
+    const timestamps = cooldowns.get(command.name);
+    const cooldownAmount = (command.cooldown || 3) * 1000;
+
+    if (timestamps.has(msg.author.id)) {
+        const expirationTime = timestamps.get(msg.author.id) + cooldownAmount;
+
+        if (now < expirationTime) {
+            const timeLeft = (expirationTime - now) / 1000;
+            return msg.reply(`Wacht nog ${timeLeft.toFixed(1)} seconde(s) voordat je \`${command.name}\` weer uitvoerd.`);
+        }
+    }
+
+    timestamps.set(msg.author.id, now);
+    setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
 
     // Run command
     try {

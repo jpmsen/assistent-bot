@@ -4,6 +4,7 @@ A Discord bot that includes Quality of Life updates created for a specific Disco
 
 <h2>Features</h2>
 ------
+
 This bot is still in development. You can find the current live version on the master branch.
 - This bot can remove or add roles to a user.
 - This bot can clear channel messages in a given parameter

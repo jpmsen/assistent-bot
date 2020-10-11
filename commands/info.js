@@ -2,9 +2,8 @@ const Discord = require('discord.js');
 
 module.exports = {
     name: 'info',
-    description: 'Sends the current information about the bot',
+    description: 'Sends the current information about the bot in the channel where command was send',
     args: false,
-    message: false,
     execute(message, args) {
         const channel = message.channel.guild.channels.cache.find(channel => channel.name === 'log-karen');
 

@@ -4,6 +4,8 @@ module.exports = {
     name: 'role',
     description: 'Adds or removes a role to a user profile.',
     args: true,
+    usage: '<rol>',
+    cooldown: 3,
     execute(message, args) {
         const roleGuild = message.guild.roles.cache.find(role => role.name.toLowerCase().startsWith(args[0].toLowerCase()));
 

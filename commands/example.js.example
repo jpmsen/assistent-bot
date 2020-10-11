@@ -1,0 +1,14 @@
+/**
+ * This file it's purpose is to give you an idea of what a command file should look like.
+ * For more information, consult https://discordjs.guide/command-handling/#individual-command-files
+ */
+
+module.exports = {
+    name: 'ping',
+    description: 'Ping!',
+    args: true,
+    usage: '<arg1> <arg2> <arg3>',
+    execute(message, args) {
+        // Enter code here
+    }
+}

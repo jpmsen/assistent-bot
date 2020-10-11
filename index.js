@@ -40,7 +40,13 @@ client.on('message', msg => {
     // Create a command object and check if this command requires arguments.
     const command = client.commands.get(commandName);
     if (command.args && !args.length) {
-        return msg.channel.send(`Deze command heeft arguments nodig, ${msg.author}!`);
+        let reply = `Deze command heeft arguments nodig, ${msg.author}`;
+
+        if (command.usage) {
+            reply += `\nDe format van de command zou moeten zijn: \`${prefix}${command.name} ${command.usage}\``
+        }
+
+        return msg.channel.send(reply);
     }
 
     // Run command

@@ -2,7 +2,18 @@
 <h1 align="center">Assistent Bot</h1>
 A Discord bot that includes Quality of Life updates created for a specific Discord server.
 
-<h3>Contributing</h3>
+<h2>Features</h2>
+------
+This bot is still in development. You can find the current live version on the master branch.
+- This bot can remove or add roles to a user.
+- This bot can clear channel messages in a given parameter
+- This bot has a dynamic help command.
+- This bot has an info command for admins to check certain information of the bot.
+- This bot gives additional log messages to admins. These log message will inform the admins about how specific commands are being used in the Discord server.
+
+Please check out the [command documentation](/docs/COMMANDS.md) for a comprohensive documentation about all the commands available.
+
+<h2>Contributing</h2>
 ------
 
 When adding new features, please make sure to make your pull requests off the `development` branch. Thank you!

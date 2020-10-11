@@ -1,3 +1,7 @@
+# Additional files
+config.json
+.eslintrc.json
+
 # Logs
 logs
 *.log

@@ -17,8 +17,9 @@ module.exports = {
             if (roleUser) {
                 message.member.roles.remove(roleGuild).then(() => {
                     message.channel.send(`<@${message.author.id}> De role '**${roleGuild.name}**' is van jouw profiel verwijderd!`);
-                    sendToLogChannel(message, `<@${msg.author.id}> heeft de role '**${roleGuild.name}**' van zijn/haar profiel verwijderd.`, '#4d88ff');
+                    sendToLogChannel(message, `<@${message.author.id}> heeft de role '**${roleGuild.name}**' van zijn/haar profiel verwijderd.`, '#4d88ff');
                 }).catch(err => {
+                    console.error(err);
                     message.channel.send(`<@${message.author.id}> Je hebt geen toestemming om jezelf '**${roleGuild.name}**' als rol te geven. Helaas pindakaas!`);
                     sendToLogChannel(message, `<@${message.author.id}> probeerde de rol '**${roleGuild.name}**' aan zichzelf toe te kennen.`, '#4d88ff');
                 })

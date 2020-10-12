@@ -39,6 +39,10 @@ When adding new features, please make sure to make your pull requests off the `d
 ### Running the bot
 1. Run the bot
     ```shell script
+    npm run build
+    ```
+You can also choose to build the bot automatically after every change
+    ```shell script
     npm run dev
     ```
 **Note:** This command runs `nodemon index.js`.

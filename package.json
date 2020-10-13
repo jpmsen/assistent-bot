@@ -4,7 +4,9 @@
     "description": "A Discord bot that includes Quality of Life updates created for a specific Discord server",
     "main": "index.js",
     "dependencies": {
-        "discord.js": "^12.3.1"
+        "@keyv/mongo": "^1.1.0",
+        "discord.js": "^12.3.1",
+        "keyv": "^4.0.3"
     },
     "devDependencies": {},
     "scripts": {

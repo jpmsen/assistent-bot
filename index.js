@@ -1,14 +1,21 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const { version, prefix, token } = require('./config.json');
+const { version, globalPrefix, token } = require('./config.json');
 
 const { Server } = require('http');
-const { message } = require('./commands/info');
+const Keyv = require('keyv');
 const client = new Discord.Client();
+// const keyv = new Keyv('mongodb://user:pass@localhost:27017/dbname');
+const keyvPrefixes = new Keyv('mongodb://user@127.0.0.1:27017/assistent-bot', { namespace: 'prefixes' });
+const keyvRoles = new Keyv('mongodb://user@127.0.0.1:27017/assistent-bot', { namespace: 'roles' });
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+// Init database
+keyvPrefixes.on('error', err => console.error('Keyv connection error:', err));
+keyvRoles.on('error', err => console.error('Keyv connection error:', err));
 
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
@@ -23,14 +30,40 @@ client.once('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('message', msg => {
-    // Check if bot is called of bot-prefix is used in message.
-    if (!msg.content.startsWith(prefix) || msg.author.bot) {
+client.on('message', async msg => {
+    // return when message is from bot
+    if (msg.author.bot) return;
+
+    let args;
+    let prefix;
+    // Handle guild-side vs dm-side
+    if (msg.guild) {
+        // guild-side
+        let guildPrefix = await keyvPrefixes.get(msg.guild.id);
+
+        if (guildPrefix == undefined) {
+            if (msg.content.startsWith(globalPrefix)) prefix = globalPrefix;
+        } else {
+            if (msg.content.startsWith(guildPrefix)) prefix = guildPrefix;
+        }
+
+        // if prefix is found, setup the args. Else there is no command.
+        if (!prefix) return;
+
+        args = msg.content.slice(prefix.length).trim().split(/ +/);
+
+    } else {
+        msg.reply('Sorry, ik ben nog niet geavanceerd genoeg om jou aanvragen via persoonlijke berichten op te lossen! :(');
+        console.log(`${msg.author} tried to send a message through DM's`);
         return;
+        /**
+         * dm-side
+         * Currently, this bot does not support DM side
+         */
+
     }
 
-    // Create a 'commandName' string that can call command. Also create the 'args' command for any arguments used for this command.
-    const args = msg.content.slice(prefix.length).trim().split(/ +/);
+    // Create a 'commandName' string that can call command.
     const commandName = args.shift().toLowerCase();
 
     // Check if commandName exists in ./commands

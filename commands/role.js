@@ -1,4 +1,7 @@
 const Discord = require('discord.js')
+const Keyv = require('keyv');
+const { database } = require('../config.json');
+const keyvRoles = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'roles' });
 
 module.exports = {
     name: 'role',
@@ -6,36 +9,27 @@ module.exports = {
     args: true,
     usage: '<rol>',
     cooldown: 3,
-    execute(message, args) {
-        const roleGuild = message.guild.roles.cache.find(role => role.name.toLowerCase().startsWith(args[0].toLowerCase()));
+    async execute(message, args) {
+        const allowedRoles = await keyvRoles.get(message.guild.id);
 
-        // If the role is found in discord server, run a check on role list of user. Else send a message to user that role does not exist.
-        if (roleGuild) {
-            const roleUser = message.member.roles.cache.find(role => role.name.toLowerCase().startsWith(args[0].toLowerCase()));
+        args.forEach(element => {
+            // Find the role on the guild using the id or when a partial name is used (so @mentions or just strings are allowed).
+            const roleGuild = message.guild.roles.cache.find(role => role.id === element.replace('<', '').replace('@', '').replace('&', '').replace('>', '') || role.name.toLowerCase().startsWith(args[0].toLowerCase()));
 
-            // if the role is found on user, delete it. Else add role to user.
-            if (roleUser) {
-                message.member.roles.remove(roleGuild).then(() => {
-                    message.channel.send(`<@${message.author.id}> De role '**${roleGuild.name}**' is van jouw profiel verwijderd!`);
-                    sendToLogChannel(message, `<@${msg.author.id}> heeft de role '**${roleGuild.name}**' van zijn/haar profiel verwijderd.`, '#4d88ff');
-                }).catch(err => {
-                    message.channel.send(`<@${message.author.id}> Je hebt geen toestemming om jezelf '**${roleGuild.name}**' als rol te geven. Helaas pindakaas!`);
-                    sendToLogChannel(message, `<@${message.author.id}> probeerde de rol '**${roleGuild.name}**' aan zichzelf toe te kennen.`, '#4d88ff');
-                })
+            // If a role exists on the guild, then continue adding/removing role to user. Else say that this role can not be managed.
+            if (allowedRoles.find(existingRole => existingRole === element) || roleGuild.id === element) {
 
+                const roleUser = message.member.roles.cache.find(role => role.id === element.replace('<', '').replace('@', '').replace('&', '').replace('>', '') || role.name.toLowerCase().startsWith(args[0].toLowerCase()));
+                // if the role is found on user, delete it. Else add role to user.
+                if (roleUser) {
+                    message.member.roles.remove(roleGuild);
+                } else {
+                    message.member.roles.add(roleGuild);
+                }
             } else {
-                message.member.roles.add(roleGuild).then(() => {
-                    message.channel.send(`<@${message.author.id}> De role '**${roleGuild.name}**' is toegevoegd aan je profiel!`);
-                    sendToLogChannel(message, `<@${message.author.id}> heeft de role '**${roleGuild.name}**' toegevoegd aan zijn/haar profiel.`, '#4d88ff');
-                }).catch(err => {
-                    message.channel.send(`<@${message.author.id}> Je hebt geen toestemming om jezelf '**${roleGuild.name}**' als rol te geven. Helaas pindakaas!`);
-                    sendToLogChannel(message, `<@${message.author.id}> probeerde de rol '**${roleGuild.name}**' aan zichzelf toe te kennen.`, '#4d88ff');
-                })
-
+                message.reply(`We konden \` ${args[0]} \` niet vinden op deze server. Het kan ook zijn dat het niet toegestaan is om jezelf deze rol te geven.`)
             }
-        } else {
-            message.channel.send(`<@${message.author.id}> De rol '**${args[0]}**' bestaat niet. Check op typfouten of probeer het nog een keer.`);
-        }
+        });
     }
 }
 

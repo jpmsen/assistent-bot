@@ -1,6 +1,7 @@
 const Keyv = require('keyv');
 const { database } = require('../config.json');
 const keyvRoles = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'roles' });
+const keyvAdminRole = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'adminRoles' });
 
 
 module.exports = {
@@ -10,6 +11,12 @@ module.exports = {
     usage: '<config command> <arguments>',
     async execute(message, args) {
         if (args.length) {
+            const modRole = await keyvAdminRole.get(message.guild.id);
+
+            // only mod-role permissions allowed for this command.
+            if (!message.member.roles.cache.find(role => role.id === modRole.replace('<', '').replace('@', '').replace('&', '').replace('>', ''))) {
+                return message.reply(`Je hebt geen permissies om dit commando uit te voeren of de beheerder heeft nog geen mod-role ingesteld.`);
+            }
 
             // $role command configurations (crud)
             if (args[0] === 'role') {

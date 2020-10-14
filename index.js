@@ -25,7 +25,7 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', () => {
-    // sendToAllLogChannel(`Bot successfully started on: ${new Date().toLocaleString()}`);
+    sendToAllLogChannel(`Bot successfully started on: ${new Date().toLocaleString()}`);
 
     console.log(`Logged in as ${client.user.tag}!`);
 });

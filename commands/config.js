@@ -1,5 +1,4 @@
 const Keyv = require('keyv');
-const role = require('./role');
 const keyvRoles = new Keyv('mongodb://user@127.0.0.1:27017/assistent-bot', { namespace: 'roles' });
 
 
@@ -25,7 +24,7 @@ module.exports = {
                         }
                     });
 
-                    await keyvRoles.set(message.guild.id, roles);
+                    keyvRoles.set(message.guild.id, roles);
                 }
 
                 // adding new roles to the config without setting them
@@ -41,7 +40,7 @@ module.exports = {
                             roles.push(element);
                         }
 
-                        await keyvRoles.set(message.guild.id, roles);
+                        keyvRoles.set(message.guild.id, roles);
                     })
                 }
 
@@ -58,7 +57,7 @@ module.exports = {
                         }
                     });
 
-                    await keyvRoles.set(message.guild.id, roles);
+                    keyvRoles.set(message.guild.id, roles);
                 }
 
                 // getting roles

@@ -1,13 +1,13 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const { version, globalPrefix, token } = require('./config.json');
+const { version, globalPrefix, token, database } = require('./config.json');
 
 const { Server } = require('http');
 const Keyv = require('keyv');
 const client = new Discord.Client();
 // const keyv = new Keyv('mongodb://user:pass@localhost:27017/dbname');
-const keyvPrefixes = new Keyv('mongodb://user@127.0.0.1:27017/assistent-bot', { namespace: 'prefixes' });
-const keyvRoles = new Keyv('mongodb://user@127.0.0.1:27017/assistent-bot', { namespace: 'roles' });
+const keyvPrefixes = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'prefixes' });
+const keyvRoles = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'roles' });
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 

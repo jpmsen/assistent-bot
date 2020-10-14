@@ -2,4 +2,12 @@
     "version": "1.0.0",
     "prefix": "$",
     "token": "token for your discord bot here"
+    "database": {
+        "name": "assistent-bot",
+        "type": "redis|mongodb|sqlite|postgresql|mysql",
+        "user": "enter username of database",
+        "password": "enter password of database",
+        "connection": "127.0.0.1",
+        "port": "6379|27017|5432|3306",
+    }
 }

@@ -1,5 +1,6 @@
 const Keyv = require('keyv');
-const keyvPrefixes = new Keyv('mongodb://user@127.0.0.1:27017/assistent-bot', { namespace: 'prefixes' });
+const { database } = require('../config.json');
+const keyvPrefixes = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'prefixes' });
 
 
 module.exports = {

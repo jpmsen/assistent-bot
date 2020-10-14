@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "prefix": "$",
-    "token": "token for your discord bot here"
+    "token": "token for your discord bot here",
     "database": {
         "name": "assistent-bot",
         "type": "redis|mongodb|sqlite|postgresql|mysql",

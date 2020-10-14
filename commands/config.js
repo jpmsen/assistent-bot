@@ -10,7 +10,7 @@ module.exports = {
     async execute(message, args) {
         if (args.length) {
 
-            // $role command configurations
+            // $role command configurations (crud)
             if (args[0] === 'role') {
 
                 // setting roles (this resets whole array)

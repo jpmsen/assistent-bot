@@ -9,12 +9,16 @@ module.exports = {
     usage: '<new mod role>',
     cooldown: 10,
     async execute(message, args) {
-
-
         let modRole = await keyvAdminRole.get(message.guild.id);
 
-        if (!message.member.roles.cache.some(role => role.id === modRole.replace('<', '').replace('@', '').replace('&', '').replace('>', ''))) return message.reply(`Je hebt geen permissie om de mod role aan te passen. Helaas pindakaas!`);
+        // If modRole is not defined, accept all, else check if the user has the right role to change it.
+        if(modRole === undefined) {
+            // user did not set up modrole, continue.
+        } else {
+            if (!message.member.roles.cache.some(role => role.id === modRole.replace('<', '').replace('@', '').replace('&', '').replace('>', ''))) return message.reply(`Je hebt geen permissie om de mod role aan te passen. Helaas pindakaas!`);
+        }
 
+        
         if (args.length) {
             if (message.guild.roles.cache.find(role => role.id === args[0].replace('<', '').replace('@', '').replace('&', '').replace('>', ''))) {
                 await keyvAdminRole.set(message.guild.id, args[0])

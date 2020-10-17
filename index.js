@@ -47,6 +47,8 @@ client.on('message', async msg => {
             if (msg.content.startsWith(guildPrefix)) prefix = guildPrefix;
         }
 
+
+
         // if prefix is found, setup the args. Else there is no command.
         if (!prefix) return;
 

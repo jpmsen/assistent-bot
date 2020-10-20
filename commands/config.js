@@ -8,17 +8,17 @@ const keyvRoleEmbedMessages = new Keyv(`${database.type}://${database.user}${dat
 
 
 const embedObj = {
-	color: '#fffff',
-	title: 'Assistent Karen',
-	url: 'https://github.com/jpmsen/assistent-bot',
-	author: {
-		name: 'by KnifeKillah#7470',
-		icon_url: 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/26/269e0405d072bc194ac3697b73bba9fea84fbe51_full.jpg',
-	},
-	description: `\`Reageer op de rol(len) die jij wilt hebben in de lijst hieronder\``,
-	fields: [],
-	footer: {
-		text: `Assistent Karen | Version ${version}`,
+    color: '#fffff',
+    title: 'Assistent Karen',
+    url: 'https://github.com/jpmsen/assistent-bot',
+    author: {
+        name: 'by KnifeKillah#7470',
+        icon_url: 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/26/269e0405d072bc194ac3697b73bba9fea84fbe51_full.jpg',
+    },
+    description: `\`Reageer op de rol(len) die jij wilt hebben in de lijst hieronder\``,
+    fields: [],
+    footer: {
+        text: `Assistent Karen | Version ${version}`,
     },
     timestamp: new Date(),
 };
@@ -102,40 +102,59 @@ module.exports = {
                         element = element.replace('<', '').replace('@', '').replace('&', '').replace('>', '');
                         const guildRole = message.guild.roles.cache.find(role => role.id === element);
                         const fieldObj = {
-                            name: `> :${index % 9 === 0 ? numWords(9) : numWords(index % 9)}:`,
+                            name: `> ${emojis[(index + 1) % 9 === 0 ? 9 : (index + 1) % 9]}`,
                             value: `${guildRole.name}`
                         }
                         embedObj.fields.push(fieldObj);
 
-                        if (index !== 0 && index % 9 === 0) {
-                            message.channel.send( {embed: embedObj }).then(async msg => {
+                        if ((index + 1) % 9 === 0) {
+                            message.channel.send({ embed: embedObj }).then(async msg => {
                                 embedMessagesId.push(msg.id);
-                                 try {
-                                    for(i = 0; i < index; i++) {
+                                try {
+                                    for (i = 0; i < index + 1; i++) {
                                         await msg.react(`${emojis[i + 1]}`);
                                     }
                                 } catch {
-                                
+
                                 }
+                                setReactionCollector(msg);
                             });
                             embedObj.fields = [];
                         }
                     });
 
-                    message.channel.send({embed: embedObj}).then(msg => {
+                    // Send unfinished 9 item array. Save message ids.
+                    message.channel.send({ embed: embedObj }).then(msg => {
                         embedMessagesId.push(msg.id);
-                        embedObj.fields.forEach((element, index) => {
-                            msg.react(`${emojis[index + 1]}`)
+                        embedObj.fields.forEach(async(element, index) => {
+                            try {
+                                await msg.react(`${emojis[index + 1]}`)
+                            } catch {}
                         })
+                        keyvRoleEmbedMessages.set(message.guild.id, embedMessagesId);
+                        setReactionCollector(msg);
                     })
-
-                    message.reply(embedMessagesId);
                 }
 
             }
 
             // Enter here new configurations
 
+        }
+        async function setReactionCollector(msg) {
+            const filter = (reaction, user) => {
+                return [emojis[1], emojis[2], emojis[3], emojis[4], emojis[5], emojis[6], emojis[7], emojis[8], emojis[9]].includes(reaction.emoji.name) && user.id === message.author.id;
+            };
+
+            const collector = msg.createReactionCollector(filter, { dispose: true });
+
+            collector.on('collect', (reaction, user) => {
+                console.log(`${user.tag} voegde ${reaction.emoji.name} toe`)
+            });
+
+            collector.on('remove', (reaction, user) => {
+                console.log(`${user.tag} verwijderde ${reaction.emoji.name}`)
+            });
         }
     }
 }

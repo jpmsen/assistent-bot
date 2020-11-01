@@ -96,6 +96,7 @@ module.exports = {
 
                 if (args[1] === 'test') {
                     const roles = await keyvRoles.get(message.guild.id);
+                    let arrayDimension = 0;
                     const embedMessagesId = [];
 
                     roles.forEach((element, index) => {
@@ -109,6 +110,8 @@ module.exports = {
 
                         if ((index + 1) % 9 === 0) {
                             message.channel.send({ embed: embedObj }).then(async msg => {
+                                setReactionCollector(msg, arrayDimension);
+                                arrayDimension += 1;
                                 embedMessagesId.push(msg.id);
                                 try {
                                     for (i = 0; i < index + 1; i++) {
@@ -117,7 +120,6 @@ module.exports = {
                                 } catch {
 
                                 }
-                                setReactionCollector(msg);
                             });
                             embedObj.fields = [];
                         }
@@ -132,8 +134,12 @@ module.exports = {
                             } catch {}
                         })
                         keyvRoleEmbedMessages.set(message.guild.id, embedMessagesId);
-                        setReactionCollector(msg);
+                        setReactionCollector(msg, arrayDimension);
                     })
+                }
+
+                if(args[2] === 'test2') {
+
                 }
 
             }
@@ -141,19 +147,50 @@ module.exports = {
             // Enter here new configurations
 
         }
-        async function setReactionCollector(msg) {
+        async function setReactionCollector(msg, dimension) {
             const filter = (reaction, user) => {
                 return [emojis[1], emojis[2], emojis[3], emojis[4], emojis[5], emojis[6], emojis[7], emojis[8], emojis[9]].includes(reaction.emoji.name) && user.id === message.author.id;
             };
 
             const collector = msg.createReactionCollector(filter, { dispose: true });
 
-            collector.on('collect', (reaction, user) => {
-                console.log(`${user.tag} voegde ${reaction.emoji.name} toe`)
+            collector.on('collect', async (reaction, user) => {
+                const roleEmbedMessages = await keyvRoleEmbedMessages.get(msg.guild.id);
+            const roles = await keyvRoles.get(msg.guild.id);
+
+                roleEmbedMessages.forEach((embedMsg, index) => {
+                    if(embedMsg === msg.id) {
+                        for(i = 0; i < 10; i ++) {
+                            if(reaction.emoji.name === emojis[i]) {
+                                // We multiply the index of current embed message by 9 to search for the role in the roles array.
+                                const userMember = msg.guild.members.cache.find(member => member.id === user.id);
+                                const roleGuild = msg.guild.roles.cache.find(role => role.id === roles[i + index * 9 - 1].replace('<', '').replace('@', '').replace('&', '').replace('>', ''));
+                                const roleUser = userMember.roles.cache.find(role => role.id === roles[i + index * 9 - 1].replace('<', '').replace('@', '').replace('&', '').replace('>', ''));
+                                    message.member.roles.add(roleGuild);
+                            }
+                        }
+                    }
+                });
             });
 
-            collector.on('remove', (reaction, user) => {
-                console.log(`${user.tag} verwijderde ${reaction.emoji.name}`)
+            collector.on('remove', async (reaction, user) => {
+                const roleEmbedMessages = await keyvRoleEmbedMessages.get(msg.guild.id);
+                const roles = await keyvRoles.get(msg.guild.id);
+
+
+                roleEmbedMessages.forEach((embedMsg, index) => {
+                    if(embedMsg === msg.id) {
+                        for(i = 0; i < 10; i ++) {
+                            if(reaction.emoji.name === emojis[i]) {
+                                // We multiply the index of current embed message by 9 to search for the role in the roles array.
+                                const userMember = msg.guild.members.cache.find(member => member.id === user.id);
+                                const roleGuild = msg.guild.roles.cache.find(role => role.id === roles[i + index * 9 - 1].replace('<', '').replace('@', '').replace('&', '').replace('>', ''));
+                                const roleUser = userMember.roles.cache.find(role => role.id === roles[i + index * 9 - 1].replace('<', '').replace('@', '').replace('&', '').replace('>', ''));
+                                    message.member.roles.remove(roleGuild);
+                            }
+                        }
+                    }
+                });
             });
         }
     }

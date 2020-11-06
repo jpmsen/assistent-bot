@@ -1,6 +1,6 @@
 const Keyv = require('keyv');
-const numWords = require('num-words');
 const emojis = require('../emojis/unicodeEmojis.js');
+const roleReactionCollector = require('../functions/roleReactionCollector.js');
 const { version, database } = require('../config.json');
 const keyvRoles = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'roles' });
 const keyvAdminRole = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'adminRoles' });
@@ -109,7 +109,8 @@ module.exports = {
                             });
 
                             // Create a reaction collector for this message.
-                            setReactionCollector(msg);
+                            roleReactionCollector.setReactionCollector(msg);
+                            // setReactionCollector(msg);
 
                             // Reset the fields in the embedded message.
                             embedObj.fields = [];
@@ -128,7 +129,8 @@ module.exports = {
                                 } catch {}
                             })
                             // Create a reaction collector for this message.
-                        setReactionCollector(msg);
+                            roleReactionCollector.setReactionCollector(msg);
+                        // setReactionCollector(msg);
 
                         // Add all the embedded message ids to the database.
                         keyvRoleEmbedMessages.set(message.guild.id, embedMessagesId);

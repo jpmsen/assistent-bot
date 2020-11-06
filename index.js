@@ -4,7 +4,7 @@ const { version, globalPrefix, token, database } = require('./config.json');
 
 const { Server } = require('http');
 const Keyv = require('keyv');
-const client = new Discord.Client();
+const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER']});
 // const keyv = new Keyv('mongodb://user:pass@localhost:27017/dbname');
 const keyvPrefixes = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'prefixes' });
 const keyvRoles = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'roles' });
@@ -46,8 +46,6 @@ client.on('message', async msg => {
         } else {
             if (msg.content.startsWith(guildPrefix)) prefix = guildPrefix;
         }
-
-
 
         // if prefix is found, setup the args. Else there is no command.
         if (!prefix) return;

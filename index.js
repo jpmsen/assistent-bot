@@ -2,12 +2,20 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const { version, globalPrefix, token, database } = require('./config.json');
 
+const roleReactionCollector = require('./functions/roleReactionCollector.js');
+
+
 const { Server } = require('http');
 const Keyv = require('keyv');
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER']});
+
 // const keyv = new Keyv('mongodb://user:pass@localhost:27017/dbname');
 const keyvPrefixes = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'prefixes' });
 const keyvRoles = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'roles' });
+const keyvRoleEmbedMessages = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'roleEmbedMessages' });
+const keyvRoleChannel = new Keyv(`${database.type}://${database.user}${database.password === "" ? '' : ':'}${database.password}@${database.connection}:${database.port}/${database.name}`, { namespace: 'roleChannel' });
+
+
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 
@@ -26,6 +34,8 @@ for (const file of commandFiles) {
 
 client.once('ready', () => {
     sendToAllLogChannel(`Bot successfully started on: ${new Date().toLocaleString()}`);
+
+    reactionListeners();
 
     console.log(`Logged in as ${client.user.tag}!`);
 });
@@ -112,6 +122,26 @@ client.on('message', async msg => {
         console.error(error);
     }
 });
+
+function reactionListeners() {
+    const guildLists = client.guilds.cache.array();
+
+    guildLists.forEach(async guild => {
+        const roleChannelId = await keyvRoleChannel.get(guild.id);
+        if(roleChannelId === undefined) return;
+
+        const roleEmbedMessages = await keyvRoleEmbedMessages.get(guild.id);
+        if(roleEmbedMessages === undefined) return; 
+        
+        const roleChannel = guild.channels.cache.get(roleChannelId);
+
+        roleEmbedMessages.forEach(embedMsgId => {
+            roleChannel.messages.fetch(embedMsgId).then(embedMsg => {
+                roleReactionCollector.setReactionCollector(embedMsg);
+            });
+        })
+    });
+}
 
 /**
  * Sends a message to the log channel of this bot.

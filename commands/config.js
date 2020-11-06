@@ -67,7 +67,7 @@ module.exports = {
 
                     // Delete last send embedded message if exists.
                     const existingEmbedMessages = await keyvRoleEmbedMessages.get(message.guild.id);
-                    if (!existingEmbedMessages == undefined) {
+                    if (existingEmbedMessages !== undefined) {
                         existingEmbedMessages.forEach(msgId => {
                             roleChannel.messages.fetch(msgId).then(msg => msg.delete());
                         })
@@ -132,6 +132,7 @@ module.exports = {
                             roleReactionCollector.setReactionCollector(msg);
                         // setReactionCollector(msg);
 
+                        embedObj.fields = [];
                         // Add all the embedded message ids to the database.
                         keyvRoleEmbedMessages.set(message.guild.id, embedMessagesId);
                     });

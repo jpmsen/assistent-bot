@@ -96,7 +96,7 @@ module.exports = {
 
                         // If we have looped over 9 items in this array, send the message with the embedded object.
                         if ((index + 1) % 9 === 0) {
-                            rolechannel.send({ embed: embedObj }).then(async msg => {
+                            roleChannel.send({ embed: embedObj }).then(async msg => {
                                 // Push the embedMessage id in the array so that we can delete this embedded message later.
                                 embedMessagesId.push(msg.id);
 
@@ -106,11 +106,11 @@ module.exports = {
                                         await msg.react(`${emojis[i + 1]}`);
                                     }
                                 } catch {}
-                            });
 
-                            // Create a reaction collector for this message.
-                            roleReactionCollector.setReactionCollector(msg);
-                            // setReactionCollector(msg);
+                                // Create a reaction collector for this message.
+                                roleReactionCollector.setReactionCollector(msg);
+                                // setReactionCollector(msg);
+                            });
 
                             // Reset the fields in the embedded message.
                             embedObj.fields = [];

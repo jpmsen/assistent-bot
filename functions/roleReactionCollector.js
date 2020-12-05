@@ -9,7 +9,7 @@ module.exports = {
     async setReactionCollector(msg) {
         // Only react when these emojis have been pressed
         const filter = (reaction, user) => {
-            return [emojis[1], emojis[2], emojis[3], emojis[4], emojis[5], emojis[6], emojis[7], emojis[8], emojis[9]].includes(reaction.emoji.name);
+            return [emojis[1], emojis[2], emojis[3], emojis[4], emojis[5], emojis[6], emojis[7], emojis[8], emojis[9]].includes(reaction.emoji.name) && user.id !== msg.author.id;
         };
 
         // create a reaction collector

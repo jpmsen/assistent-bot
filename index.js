@@ -135,11 +135,14 @@ function reactionListeners() {
         
         const roleChannel = guild.channels.cache.get(roleChannelId);
 
-        roleEmbedMessages.forEach(embedMsgId => {
-            roleChannel.messages.fetch(embedMsgId).then(embedMsg => {
-                roleReactionCollector.setReactionCollector(embedMsg);
+        try {
+            roleEmbedMessages.forEach(embedMsgId => {
+                roleChannel.messages.fetch(embedMsgId).then(embedMsg => {
+                    roleReactionCollector.setReactionCollector(embedMsg);
+                });
             });
-        })
+        } catch { console.error('Could not find message (line 139)') }
+        
     });
 }
 

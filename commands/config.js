@@ -69,7 +69,11 @@ module.exports = {
                     const existingEmbedMessages = await keyvRoleEmbedMessages.get(message.guild.id);
                     if (existingEmbedMessages !== undefined) {
                         existingEmbedMessages.forEach(msgId => {
-                            roleChannel.messages.fetch(msgId).then(msg => msg.delete());
+                            roleChannel.messages.fetch(msgId).then(msg => {
+                                try {
+                                    msg.delete()
+                                } catch { console.error("Couldn't delete older message (line 74)")}
+                            });
                         })
                     }
 
